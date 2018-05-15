@@ -16,12 +16,12 @@ router.get('/', function (req, res) {
 
 // A GET route for scraping the new york times tech website
 router.get("/scrape", function (req, res) {
-    // First, we grab the body of the html with request
+    // First, grab the body of the html with request
     request("https://www.nytimes.com/section/technology", function (err, response, html) {
-        // Then, we load that into cheerio and save it to $ for a shorthand selector
+        // Then, load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(html);
         var articleArray = [];
-        // Now, we grab every h2 within an article tag, and do the following:
+        // Now, grab every h2 within an article tag, and do the following:
         $("a.story-link .story-meta").each(function (i, element) {
             // Save an empty result object
             var result = {};
@@ -52,7 +52,7 @@ router.get("/scrape", function (req, res) {
                 return res.json(err);
             });
 
-        // If we were able to successfully scrape and save an Article, route to home
+        // If able to successfully scrape and save an Article, route to home
         res.render("index");
     });
 });
@@ -62,7 +62,7 @@ router.get("/articles", function (req, res) {
     // Grab every document in the Articles collection
     models.Article.find({})
         .then(function (dbArticle) {
-            // If we were able to successfully find Articles, send them back to the client
+            // If able to successfully find Articles, send them back to the client
             res.json(dbArticle);
         })
         .catch(function (err) {
@@ -73,7 +73,7 @@ router.get("/articles", function (req, res) {
 
 // Route for grabbing a specific Article by id, populate it with it's comment
 router.get("/articles/:id", function (req, res) {
-    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+    // Using the id passed in the id parameter, prepare a query that finds the matching one in db...
     models.Article.findOne({ _id: req.params.id })
         // ..and populate all of the comments associated with it
         .populate("comment")
@@ -93,7 +93,7 @@ router.post("/comment", function (req, res) {
             console.log(req.body);
             //  If a comment was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new comments
             // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-            // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+            // Mongoose query returns a promise, chain another `.then` which receives the result of the query
             return models.Article.findOneAndUpdate({}, { $push: { comment: dbComment._id } }, { new: true }).populate("comment");
         })
         .catch(function (err) {
@@ -103,5 +103,5 @@ router.post("/comment", function (req, res) {
     res.redirect('back');
 });
 
-//expots router
+//exports router
 module.exports = router;
