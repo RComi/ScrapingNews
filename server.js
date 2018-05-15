@@ -6,7 +6,7 @@ var logger = require("morgan");
 var mongoose = require("mongoose");
 
 //port set up
-var PORT = 3000;
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();
@@ -27,8 +27,10 @@ app.use(express.static("public"));
 var routes = require("./controllers/controller.js");
 app.use("/", routes);
 
+var mongooseConnection = process.env.MONGODB_URI || "mongodb://localhost/scrapingnews";
+
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/scrapingnews");
+mongoose.connect(mongooseConnection);
 
 // Start the server
 app.listen(PORT, function () {
